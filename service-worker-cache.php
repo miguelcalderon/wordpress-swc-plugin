@@ -42,6 +42,7 @@ EOD;
 
 function redirect_shared_worker_requests( $rules ) {
 	global $swc_rules;
+	echo "YEEEEEEAAAAAAh!!!";
 	if (strpos($rules, $swc_rules) == 0) {
 		return $swc_rules.$rules;
 	} else {
@@ -56,12 +57,18 @@ function unredirect_shared_worker_requests( $rules ) {
 		return str_replace($swc_rules, '', $rules);
 	}
 }
+function swc_flush_rewrites() {
+	global $wp_rewrite;
+	$wp_rewrite->flush_rules();
+}
 function activate_service_worker_cache() {
 	add_filter('mod_rewrite_rules', 'redirect_shared_worker_requests');
+	add_action('admin_init', 'swc_flush_rewrites');
 }
 register_activation_hook( __FILE__, 'activate_service_worker_cache' );
 function deactivate_service_worker_cache() {
 	add_filter('mod_rewrite_rules', 'unredirect_shared_worker_requests');
+	add_action('admin_init', 'swc_flush_rewrites');
 }
 register_deactivation_hook( __FILE__, 'deactivate_service_worker_cache' );
 
