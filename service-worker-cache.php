@@ -33,42 +33,32 @@ define( 'SERVICE_WORKER_CACHE_RELEASE_DATE', date_i18n( 'F j, Y' ) );
 define( 'SERVICE_WORKER_CACHE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SERVICE_WORKER_CACHE_URL', plugin_dir_url( __FILE__ ) );
 
-$swc_rules = <<<EOD
-\n # BEGIN Shared Worker Cache
-RewriteEngine on
-RewriteRule "^/serviceWorker.js$" "/wp-content/plugins/service-worker-cache/service-worker-cache.js" [PT]
-# END Shared Worker Cache\n
-EOD;
-
-function redirect_shared_worker_requests( $rules ) {
-	global $swc_rules;
-	echo "YEEEEEEAAAAAAh!!!";
-	if (strpos($rules, $swc_rules) == 0) {
-		return $swc_rules.$rules;
-	} else {
-		return $rules;
-	}
-}
-function unredirect_shared_worker_requests( $rules ) {
-	global $swc_rules;
-	if (strpos($rules, $swc_rules) == 0) {
-		return $rules;
-	} else {
-		return str_replace($swc_rules, '', $rules);
-	}
-}
-function swc_flush_rewrites() {
+function refresh_rewrite_rules() {
 	global $wp_rewrite;
 	$wp_rewrite->flush_rules();
 }
+function add_swc_rewrite($rules) {
+	return str_replace('RewriteBase /', 'RewriteBase /'."\n".'RewriteRule ^serviceWorker.js$ '.str_replace(site_url(), '', plugin_dir_url( __FILE__ )).'service-worker-cache.js [PT,L]', $rules);
+}
+function remove_swc_rewrite($rules) {
+	return str_replace("\n".'RewriteRule ^serviceWorker.js$ '.str_replace(site_url(), '', plugin_dir_url( __FILE__ )).'service-worker-cache.js [PT,L]', '', $rules);
+}
 function activate_service_worker_cache() {
-	add_filter('mod_rewrite_rules', 'redirect_shared_worker_requests');
-	add_action('admin_init', 'swc_flush_rewrites');
+	/*
+	if (!copy(plugin_dir_path (__FILE__).'service-worker-cache.js', get_home_path().'serviceWorker.js')) {
+		echo ("failed to copy service-worker-cache.js...");
+	}
+	*/
+	add_filter( 'mod_rewrite_rules', 'add_swc_rewrite');
+	refresh_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'activate_service_worker_cache' );
 function deactivate_service_worker_cache() {
-	add_filter('mod_rewrite_rules', 'unredirect_shared_worker_requests');
-	add_action('admin_init', 'swc_flush_rewrites');
+	/*
+	unlink(get_home_path().'serviceWorker.js');
+	*/
+	add_filter( 'mod_rewrite_rules', 'remove_swc_rewrite');
+	refresh_rewrite_rules();
 }
 register_deactivation_hook( __FILE__, 'deactivate_service_worker_cache' );
 
@@ -90,17 +80,17 @@ function add_service_worker_cache() {
 	</script>
 	<?php
 }
-function register_swc_settings() { // whitelist options
+function register_swc_settings() {
 	register_setting( 'swc_option1-group', 'SWC Option' );
 }
 function add_swc_menu() {
 	add_menu_page('SWC Plugin Settings', 'SWC Settings', 'administrator', __FILE__, 'swc_plugin_settings_page' , 'dashicons-controls-forward' );
-	add_action( 'admin_init', 'register_swc_settings' );
+	add_action('admin_init', 'register_swc_settings');
 }
-if ( is_admin() ){ // admin actions
-	add_action( 'admin_menu', 'add_swc_menu' );
+if (is_admin()) {
+	add_action('admin_menu', 'add_swc_menu');
 } else {
-	add_service_worker_cache();
+	add_action( 'get_footer', 'add_service_worker_cache' );
 }
 function swc_plugin_settings_page() {
 	?>
