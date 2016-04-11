@@ -34,11 +34,11 @@ define( 'SERVICE_WORKER_CACHE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SERVICE_WORKER_CACHE_URL', plugin_dir_url( __FILE__ ) );
 
 function activate_service_worker_cache() {
-	exec('ln -s '.plugin_dir_path( __FILE__ ).'service-worker-cache.js '.get_home_path().'serviceWorker.js');
+	//exec('ln -s '.plugin_dir_path( __FILE__ ).'service-worker-cache.js '.get_home_path().'serviceWorker.js');
 }
 register_activation_hook( __FILE__, 'activate_service_worker_cache' );
 function deactivate_service_worker_cache() {
-	exec('unlink '.get_home_path().'serviceWorker.js');
+	//exec('unlink '.get_home_path().'serviceWorker.js');
 }
 register_deactivation_hook( __FILE__, 'deactivate_service_worker_cache' );
 
@@ -60,7 +60,6 @@ function add_service_worker_cache() {
 	</script>
 	<?php
 }
-add_service_worker_cache();
 function register_swc_settings() { // whitelist options
 	register_setting( 'swc_option1-group', 'SWC Option' );
 }
@@ -72,7 +71,7 @@ if ( is_admin() ){ // admin actions
 	add_action( 'admin_menu', 'add_swc_menu' );
 	add_action( 'admin_init', 'register_swc_settings' );
 } else {
-	// non-admin enqueues, actions, and filters
+	add_service_worker_cache();
 }
 function swc_plugin_settings_page() {
 	?>
