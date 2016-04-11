@@ -34,7 +34,7 @@ self.addEventListener('activate', event => {
   }
   event.waitUntil(
     onActivate(event, config)
-      .then( () => self.clients.claim() )
+      .then(() => self.clients.claim())
   );
 });
 
