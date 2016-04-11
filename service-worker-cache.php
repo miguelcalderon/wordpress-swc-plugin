@@ -33,12 +33,35 @@ define( 'SERVICE_WORKER_CACHE_RELEASE_DATE', date_i18n( 'F j, Y' ) );
 define( 'SERVICE_WORKER_CACHE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SERVICE_WORKER_CACHE_URL', plugin_dir_url( __FILE__ ) );
 
+$swc_rules = <<<EOD
+\n # BEGIN Shared Worker Cache
+RewriteEngine on
+RewriteRule "^/serviceWorker.js$" "/wp-content/plugins/service-worker-cache/service-worker-cache.js" [PT]
+# END Shared Worker Cache\n
+EOD;
+
+function redirect_shared_worker_requests( $rules ) {
+	global $swc_rules;
+	if (strpos($rules, $swc_rules) == 0) {
+		return $swc_rules.$rules;
+	} else {
+		return $rules;
+	}
+}
+function unredirect_shared_worker_requests( $rules ) {
+	global $swc_rules;
+	if (strpos($rules, $swc_rules) == 0) {
+		return $rules;
+	} else {
+		return str_replace($swc_rules, '', $rules);
+	}
+}
 function activate_service_worker_cache() {
-	//exec('ln -s '.plugin_dir_path( __FILE__ ).'service-worker-cache.js '.get_home_path().'serviceWorker.js');
+	add_filter('mod_rewrite_rules', 'redirect_shared_worker_requests');
 }
 register_activation_hook( __FILE__, 'activate_service_worker_cache' );
 function deactivate_service_worker_cache() {
-	//exec('unlink '.get_home_path().'serviceWorker.js');
+	add_filter('mod_rewrite_rules', 'unredirect_shared_worker_requests');
 }
 register_deactivation_hook( __FILE__, 'deactivate_service_worker_cache' );
 
