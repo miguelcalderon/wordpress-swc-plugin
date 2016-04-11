@@ -64,12 +64,11 @@ function register_swc_settings() { // whitelist options
 	register_setting( 'swc_option1-group', 'SWC Option' );
 }
 function add_swc_menu() {
-	add_menu_page('SWC Plugin Settings', 'SWC Settings', 'administrator', __FILE__, 'swc_plugin_settings_page' , plugins_url('/images/icon.png', __FILE__) );
+	add_menu_page('SWC Plugin Settings', 'SWC Settings', 'administrator', __FILE__, 'swc_plugin_settings_page' , 'dashicons-controls-forward' );
 	add_action( 'admin_init', 'register_swc_settings' );
 }
 if ( is_admin() ){ // admin actions
 	add_action( 'admin_menu', 'add_swc_menu' );
-	add_action( 'admin_init', 'register_swc_settings' );
 } else {
 	add_service_worker_cache();
 }
