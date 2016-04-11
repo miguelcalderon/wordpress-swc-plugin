@@ -61,4 +61,48 @@ function add_service_worker_cache() {
 	<?php
 }
 add_service_worker_cache();
+function register_swc_settings() { // whitelist options
+	register_setting( 'swc_option1-group', 'SWC Option' );
+}
+function add_swc_menu() {
+	add_menu_page('SWC Plugin Settings', 'SWC Settings', 'administrator', __FILE__, 'swc_plugin_settings_page' , plugins_url('/images/icon.png', __FILE__) );
+	add_action( 'admin_init', 'register_swc_settings' );
+}
+if ( is_admin() ){ // admin actions
+	add_action( 'admin_menu', 'add_swc_menu' );
+	add_action( 'admin_init', 'register_swc_settings' );
+} else {
+	// non-admin enqueues, actions, and filters
+}
+function swc_plugin_settings_page() {
+	?>
+	<div class="wrap">
+		<h2>Shared Workers Cache</h2>
+
+		<form method="post" action="options.php">
+			<?php settings_fields( 'swc_option1-group' ); ?>
+			<?php do_settings_sections( 'swc_option1-group' ); ?>
+			<table class="form-table">
+				<tr valign="top">
+					<th scope="row">New Option Name</th>
+					<td><input type="text" name="new_option_name" value="<?php echo esc_attr( get_option('new_option_name') ); ?>" /></td>
+				</tr>
+
+				<tr valign="top">
+					<th scope="row">Some Other Option</th>
+					<td><input type="text" name="some_other_option" value="<?php echo esc_attr( get_option('some_other_option') ); ?>" /></td>
+				</tr>
+
+				<tr valign="top">
+					<th scope="row">Options, Etc.</th>
+					<td><input type="text" name="option_etc" value="<?php echo esc_attr( get_option('option_etc') ); ?>" /></td>
+				</tr>
+			</table>
+
+			<?php submit_button(); ?>
+
+		</form>
+	</div>
+<?php
+}
 ?>
