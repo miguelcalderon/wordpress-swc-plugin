@@ -49,18 +49,18 @@ function activate_service_worker_cache() {
 		echo ("failed to copy service-worker-cache.js...");
 	}
 	*/
-	add_filter( 'mod_rewrite_rules', 'add_swc_rewrite');
+	add_filter('mod_rewrite_rules', 'add_swc_rewrite');
 	refresh_rewrite_rules();
 }
-register_activation_hook( __FILE__, 'activate_service_worker_cache' );
+register_activation_hook(__FILE__, 'activate_service_worker_cache');
 function deactivate_service_worker_cache() {
 	/*
 	unlink(get_home_path().'serviceWorker.js');
 	*/
-	add_filter( 'mod_rewrite_rules', 'remove_swc_rewrite');
+	add_filter('mod_rewrite_rules', 'remove_swc_rewrite');
 	refresh_rewrite_rules();
 }
-register_deactivation_hook( __FILE__, 'deactivate_service_worker_cache' );
+register_deactivation_hook(__FILE__, 'deactivate_service_worker_cache');
 
 function add_service_worker_cache() {
 	?>
