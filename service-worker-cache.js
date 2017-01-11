@@ -25,7 +25,12 @@ function getConfig() {
       http.onreadystatechange = function() {
         if (http.readyState === 4) {
           if (http.status === 200) {
-            config = http.responseText;
+            try {
+              config = JSON.parse(http.responseText);
+            } catch (e) {
+              reject(e);
+              return;
+            }
             resolve(config);
           } else {
             reject(http.statusText);
