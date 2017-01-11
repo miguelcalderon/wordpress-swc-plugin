@@ -66,22 +66,6 @@ function add_mc_service_worker_cache() {
 	$url = plugins_url('mc-service-worker-cache');
 	wp_enqueue_script('mc_swc_registration_placeholder', $url.'/mc_swc_registration_placeholder.js', array());
 	wp_localize_script( 'mc_swc_registration_placeholder', 'mc_service_worker_cache', array('ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'settings_url' ) ));
-	?>
-	<script>
-		console.log('Registering service worker.');
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/serviceWorker.js?settings=' + encodeURIComponent(mc_service_worker_cache.ajax_url) + '&nonce=' + mc_service_worker_cache.nonce, {
-				scope: '/'
-			}).then(function(reg) {
-				// registration worked
-				console.log('Registration succeeded. Scope is ' + reg.scope);
-			}).catch(function(error) {
-				// registration failed
-				console.log('Registration failed with ' + error);
-			});
-		}
-	</script>
-	<?php
 }
 function register_mc_swc_settings() {
 	register_setting( 'mc_swc_option1-group', 'SWC Option' );
