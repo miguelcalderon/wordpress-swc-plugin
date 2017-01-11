@@ -44,7 +44,7 @@ function getConfig() {
   });
 }
 
-self.importScripts('/wp-content/mc-service-worker-cache/idb.js');
+self.importScripts('/wp-content/plugins/mc-service-worker-cache/idb.js');
 var swdb;
 function idb() {
   if (!swdb) {
