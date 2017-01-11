@@ -63,11 +63,14 @@ function deactivate_mc_service_worker_cache() {
 register_deactivation_hook(__FILE__, 'deactivate_mc_service_worker_cache');
 
 function add_mc_service_worker_cache() {
+	$url = plugins_url('mc-service-worker-cache');
+	wp_enqueue_script('mc_swc_registration_placeholder', $url.'/mc_swc_registration_placeholder.js', array());
+	wp_localize_script( 'mc_swc_registration_placeholder', 'mc_service_worker_cache', array('ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'settings_url' ) ));
 	?>
 	<script>
 		console.log('Registering service worker.');
 		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/serviceWorker.js', {
+			navigator.serviceWorker.register('/serviceWorker.js?settings=' + encodeURIComponent(mc_service_worker_cache.ajax_url) + '&nonce=' + mc_service_worker_cache.nonce, {
 				scope: '/'
 			}).then(function(reg) {
 				// registration worked
@@ -95,8 +98,7 @@ if (is_admin()) {
 function mc_swc_plugin_settings_page() {
 	?>
 	<div class="wrap">
-		<h2>Shared Workers Cache</h2>
-
+		<h2>Service Worker Cache</h2>
 		<form method="post" action="options.php">
 			<?php settings_fields( 'mc_swc_option1-group' ); ?>
 			<?php do_settings_sections( 'mc_swc_option1-group' ); ?>
@@ -116,11 +118,16 @@ function mc_swc_plugin_settings_page() {
 					<td><input type="text" name="option_etc" value="<?php echo esc_attr( get_option('option_etc') ); ?>" /></td>
 				</tr>
 			</table>
-
 			<?php submit_button(); ?>
-
 		</form>
 	</div>
 <?php
+}
+
+add_action( 'wp_ajax_getsettings', 'mc_swc_get_settings' );
+add_action( 'wp_ajax_nopriv_getsettings', 'mc_swc_get_settings' );
+
+function mc_swc_get_settings() {
+	die('{ "staticCacheItems": [ "/" ]}');
 }
 ?>

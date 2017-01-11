@@ -1,9 +1,9 @@
 === MC Service Worker Cache ===
 Contributors: miguelcalderon
 Tags: service worker cache
-Requires at least: 4.5
-Tested up to: 4.5
-Stable tag: 4.5
+Requires at least: 4.7
+Tested up to: 4.7
+Stable tag: 4.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

@@ -1,22 +1,64 @@
+'use strict';
+function queryVar(name, url) {
+  if (!url) {
+    url = window.location.href;
+  }
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 var config = {
   staticCacheItems: [
     '/'
   ]
 };
+function getConfig() {
+  return new Promise(function (resolve, reject) {
+    var query = self.location.search;
+    if (query) {
+      var http = new XMLHttpRequest();
+      http.open('POST', decodeURIComponent(queryVar('settings'), query), true);
+      http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      http.onreadystatechange = function() {
+        if (http.readyState === 4) {
+          if (http.status === 200) {
+            config = http.responseText;
+            resolve(config);
+          } else {
+            reject(http.statusText);
+          }
+        }
+      };
+      http.send('action=settings_url&_ajax_nonce=' + queryVar('nonce'));
+    } else {
+      reject('No settings retrieval URL available.');
+    }
+  });
+}
+
+self.importScripts('/wp-content/mc-service-worker-cache/idb.js');
+var swdb;
+function idb() {
+  if (!swdb) {
+    swdb = new Idb('mc-swc', 1, function(db) {
+      db.createObjectStore('settings');
+    });
+  }
+  return swdb;
+}
+
 var CACHE_NAME = 'static';
 //console.log('I\'m a service worker!');
 self.addEventListener('install', event => {
   //console.log('Install stuff');
   function onInstall () {
-    return caches.open(CACHE_NAME)
-        .then(cache => cache.addAll([
-        '/'
-      ])
-  );
-}
-event.waitUntil(
-  onInstall(event, config)
-    .then( () => self.skipWaiting() )
+    return caches.open(CACHE_NAME).then(cache => cache.addAll(['/']));
+  }
+  event.waitUntil(onInstall(event, config)
+    .then(() => self.skipWaiting())
   );
 });
 
@@ -32,6 +74,7 @@ self.addEventListener('activate', event => {
         return Promise.all(deletePromises);
       });
   }
+  getConfig().then(config => idb().set('settings', config));
   event.waitUntil(
     onActivate(event, config)
       .then(() => self.clients.claim())
@@ -39,7 +82,7 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', function(event) {
-  if (event.request.url.match(/wp-admin/) || event.request.url.match(/preview=true/)) {
+  if (event.request.url.indexOf('/wp-admin') !== -1 || event.request.url.indexOf('/wp-includes') !== -1 || event.request.url.indexOf('preview=true') !== -1 ) {
     return;
   }
   event.respondWith(
