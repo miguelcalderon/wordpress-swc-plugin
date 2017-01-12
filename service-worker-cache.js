@@ -1,7 +1,7 @@
 'use strict';
 function queryVar(name, url) {
   if (!url) {
-    url = window.location.href;
+    url = self.location.href;
   }
   name = name.replace(/[\[\]]/g, "\\$&");
   var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
