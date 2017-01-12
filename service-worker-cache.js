@@ -31,7 +31,6 @@ function getConfig() {
               throw e;
               return;
             }
-            console.log(responseJSON);
             resolve(config);
           });
         } else {
