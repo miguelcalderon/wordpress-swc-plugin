@@ -23,6 +23,9 @@ function getConfig() {
       ajaxFormData.append('action', 'settings_url');
       ajaxFormData.append('_ajax_nonce', queryVar('nonce'));
       fetch(decodeURIComponent(queryVar('settings'), query), { method: 'POST', body: ajaxFormData }).then(function(response) {
+
+        console.log(response);
+
         if (response.ok) {
           return response.json();
         } else {
@@ -80,8 +83,7 @@ self.addEventListener('activate', event => {
       });
   }
   getConfig().then(config => {
-    console.log(config);
-    idb().put('settings', 'config', config);
+    return idb().put('settings', 'config', config);
   });
   event.waitUntil(
     onActivate(event, config)
