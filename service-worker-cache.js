@@ -87,7 +87,7 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', function(event) {
-  if (event.request.url.indexOf('/wp-admin') !== -1 || event.request.url.indexOf('/wp-includes') !== -1 || event.request.url.indexOf('preview=true') !== -1 ) {
+  if (event.request.url.indexOf('/wp-admin') !== -1 || event.request.url.indexOf('preview=true') !== -1 ) {
     return;
   }
   event.respondWith(
