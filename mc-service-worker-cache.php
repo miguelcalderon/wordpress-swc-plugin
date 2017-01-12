@@ -112,6 +112,8 @@ add_action( 'wp_ajax_getsettings', 'mc_swc_get_settings' );
 add_action( 'wp_ajax_nopriv_getsettings', 'mc_swc_get_settings' );
 
 function mc_swc_get_settings() {
-	die('{ "staticCacheItems": [ "/", "test" ]}');
+    header('Content-Type: application/json');
+	echo('{ "staticCacheItems": [ { "one": "/" } ]}\n');
+	exit();
 }
 ?>
