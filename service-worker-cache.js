@@ -85,7 +85,7 @@ self.addEventListener('activate', event => {
 
   console.log(idb());
 
-  getConfig().then(config => idb().set('settings', config));
+  getConfig().then(config => idb().put('settings', 'config', config));
   event.waitUntil(
     onActivate(event, config)
       .then(() => self.clients.claim())
