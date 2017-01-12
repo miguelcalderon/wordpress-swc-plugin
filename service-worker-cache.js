@@ -58,7 +58,6 @@ function idb() {
 }
 
 var CACHE_NAME = 'static';
-console.log('Push test');
 //console.log('I\'m a service worker!');
 self.addEventListener('install', event => {
   //console.log('Install stuff');
@@ -82,9 +81,6 @@ self.addEventListener('activate', event => {
         return Promise.all(deletePromises);
       });
   }
-
-  console.log(idb());
-
   getConfig().then(config => idb().put('settings', 'config', config));
   event.waitUntil(
     onActivate(event, config)
