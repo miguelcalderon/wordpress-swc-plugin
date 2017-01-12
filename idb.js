@@ -70,4 +70,5 @@ function Idb(name, version, upgradeCallback) {
       });
     }
   };
+  return payload;
 }
