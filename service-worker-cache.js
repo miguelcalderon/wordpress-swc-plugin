@@ -27,19 +27,24 @@ function getConfig() {
         console.log(response);
 
         if (response.ok) {
+          console.log('1');
           return response.json().then(function(responseJSON) {
+            console.log('2');
             try {
               config = responseJSON;
             } catch (e) {
               throw e;
               return;
             }
+            console.log('3');
             resolve(config);
           });
         } else {
+          console.log('4');
           reject(response.statusText);
         }
       }).catch(function(error) {
+        console.log('5');
         reject(error);
       });
     } else {
