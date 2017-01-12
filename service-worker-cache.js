@@ -20,7 +20,7 @@ function getConfig() {
     var query = self.location.search;
     if (query) {
       var ajaxFormData = new FormData();
-      ajaxFormData.append('action', 'settings_url');
+      ajaxFormData.append('action', 'getsettings');
       ajaxFormData.append('_ajax_nonce', queryVar('nonce'));
       fetch(decodeURIComponent(queryVar('settings'), query), { method: 'POST', body: ajaxFormData }).then(function(response) {
         if (response.ok) {

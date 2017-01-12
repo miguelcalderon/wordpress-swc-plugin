@@ -65,7 +65,7 @@ register_deactivation_hook(__FILE__, 'deactivate_mc_service_worker_cache');
 function add_mc_service_worker_cache() {
 	$url = plugins_url('mc-service-worker-cache');
 	wp_enqueue_script('mc_swc_registration_placeholder', $url.'/mc_swc_registration_placeholder.js', array());
-	wp_localize_script( 'mc_swc_registration_placeholder', 'mc_service_worker_cache', array('ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'settings_url' ), 'plugin_url' => $url ));
+	wp_localize_script( 'mc_swc_registration_placeholder', 'mc_service_worker_cache', array('ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'getsettings' ), 'plugin_url' => $url ));
 }
 function register_mc_swc_settings() {
 	register_setting( 'mc_swc_option1-group', 'SWC Option' );
