@@ -79,7 +79,10 @@ self.addEventListener('activate', event => {
         return Promise.all(deletePromises);
       });
   }
-  getConfig().then(config => idb().put('settings', 'config', config));
+  getConfig().then(config => {
+    console.log(config);
+    idb().put('settings', 'config', config);
+  });
   event.waitUntil(
     onActivate(event, config)
       .then(() => self.clients.claim())
