@@ -23,28 +23,21 @@ function getConfig() {
       ajaxFormData.append('action', 'settings_url');
       ajaxFormData.append('_ajax_nonce', queryVar('nonce'));
       fetch(decodeURIComponent(queryVar('settings'), query), { method: 'POST', body: ajaxFormData }).then(function(response) {
-
-        console.log(response);
-
         if (response.ok) {
-          console.log('1');
           return response.json().then(function(responseJSON) {
-            console.log('2');
             try {
               config = responseJSON;
             } catch (e) {
               throw e;
               return;
             }
-            console.log('3');
+            console.log(responseJSON);
             resolve(config);
           });
         } else {
-          console.log('4');
           reject(response.statusText);
         }
       }).catch(function(error) {
-        console.log('5');
         reject(error);
       });
     } else {
