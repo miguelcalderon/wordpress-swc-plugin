@@ -19,32 +19,34 @@ function getConfig() {
   return new Promise(function (resolve, reject) {
     var query = self.location.search;
     if (query) {
-      var http = new XMLHttpRequest();
-      http.open('POST', decodeURIComponent(queryVar('settings'), query), true);
-      http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-      http.onreadystatechange = function() {
-        if (http.readyState === 4) {
-          if (http.status === 200) {
-            try {
-              config = JSON.parse(http.responseText);
-            } catch (e) {
-              reject(e);
-              return;
-            }
-            resolve(config);
-          } else {
-            reject(http.statusText);
-          }
+      var ajaxFormData = new FormData();
+      ajaxFormData.append('action', 'settings_url');
+      ajaxFormData.append('_ajax_nonce', queryVar('nonce'));
+      fetch(decodeURIComponent(queryVar('settings'), query), { method: 'POST', body: ajaxFormData }).then(function(response) {
+        if (response.ok) {
+          return response.json();
+        } else {
+          reject(response.statusText);
         }
-      };
-      http.send('action=settings_url&_ajax_nonce=' + queryVar('nonce'));
+      }).then(function(responseJSON) {
+        try {
+          config = responseJSON;
+        } catch (e) {
+          throw e;
+          return;
+        }
+        resolve(config);
+      }).catch(function(error) {
+        reject(error);
+      });
     } else {
       reject('No settings retrieval URL available.');
     }
   });
 }
 
-self.importScripts('/wp-content/plugins/mc-service-worker-cache/idb.js');
+self.importScripts(queryVar('plugin_url') + '/idb.js');
+
 var swdb;
 function idb() {
   if (!swdb) {
