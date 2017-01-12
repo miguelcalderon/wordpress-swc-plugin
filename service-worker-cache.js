@@ -27,18 +27,18 @@ function getConfig() {
         console.log(response);
 
         if (response.ok) {
-          return response.json();
+          return response.json().then(function(responseJSON) {
+            try {
+              config = responseJSON;
+            } catch (e) {
+              throw e;
+              return;
+            }
+            resolve(config);
+          });
         } else {
           reject(response.statusText);
         }
-      }).then(function(responseJSON) {
-        try {
-          config = responseJSON;
-        } catch (e) {
-          throw e;
-          return;
-        }
-        resolve(config);
       }).catch(function(error) {
         reject(error);
       });
