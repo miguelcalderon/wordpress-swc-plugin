@@ -82,6 +82,9 @@ self.addEventListener('activate', event => {
         return Promise.all(deletePromises);
       });
   }
+
+  console.log(idb());
+
   getConfig().then(config => idb().set('settings', config));
   event.waitUntil(
     onActivate(event, config)
