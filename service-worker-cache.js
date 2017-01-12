@@ -74,10 +74,8 @@ self.addEventListener('activate', event => {
   function onActivate (event, opts) {
     return caches.keys()
       .then(cacheKeys => {
-        var oldCacheKeys = cacheKeys.filter(key =>
-          key.indexOf(opts.version) !== 0
-        );
-        var deletePromises = oldCacheKeys.map(oldKey => caches.delete(oldKey));
+        var oldCacheKeys = cacheKeys.filter(key => key.indexOf(opts.version) !== 0),
+            deletePromises = oldCacheKeys.map(oldKey => caches.delete(oldKey));
         return Promise.all(deletePromises);
       });
   }
