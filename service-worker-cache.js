@@ -25,7 +25,6 @@ function getConfig() {
       fetch(decodeURIComponent(queryVar('settings'), query), { method: 'POST', body: ajaxFormData }).then(function(response) {
         if (response.ok) {
           return response.json().then(function(responseJSON) {
-            console.log(responseJSON);
             try {
               config = responseJSON;
             } catch (e) {
@@ -80,8 +79,9 @@ self.addEventListener('activate', event => {
         return Promise.all(deletePromises);
       });
   }
-  getConfig().then(config => {
-    return idb().put('settings', 'config', config);
+  getConfig().then(idbConfig => {
+    console.log(idbConfig);
+    return idb().put('settings', 'config', idbConfig);
   });
   event.waitUntil(
     onActivate(event, config)
