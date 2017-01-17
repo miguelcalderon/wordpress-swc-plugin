@@ -79,7 +79,34 @@ if (is_admin()) {
 } else {
 	add_action( 'get_footer', 'add_mc_service_worker_cache' );
 }
+function create_section_for_radio($value) {
+	create_opening_tag($value);
+	foreach ($value['options'] as $option_value => $option_text) {
+		$checked = ' ';
+		if (get_option($value['id']) == $option_value) {
+			$checked = ' checked="checked" ';
+		}
+		else if (get_option($value['id']) === FALSE && $value['std'] == $option_value){
+			$checked = ' checked="checked" ';
+		}
+		else {
+			$checked = ' ';
+		}
+		echo '<div class="mnt-radio"><input type="radio" name="'.$value['id'].'" value="'.
+		     $option_value.'" '.$checked."/>".$option_text."</div>\n";
+	}
+	create_closing_tag($value);
+}
+
 function mc_swc_plugin_settings_page() {
+    $checked_images_yes = esc_attr( get_option('cache_images') ) == 'yes' ? ' checked' : '';
+	$checked_images_no = esc_attr( get_option('cache_images') ) == 'no' ? ' checked' : '';
+	$checked_css_yes = esc_attr( get_option('cache_css') ) == 'yes' ? ' checked' : '';
+	$checked_css_no = esc_attr( get_option('cache_css') ) == 'no' ? ' checked' : '';
+	$checked_js_yes = esc_attr( get_option('cache_js') ) == 'yes' ? ' checked' : '';
+	$checked_js_no = esc_attr( get_option('cache_js') ) == 'no' ? ' checked' : '';
+	$checked_other_yes = esc_attr( get_option('cache_images') ) == 'yes' ? ' checked' : '';
+	$checked_other_no = esc_attr( get_option('cache_images') ) == 'no' ? ' checked' : '';
 	?>
 	<div class="wrap">
 		<h2>Service Worker Cache</h2>
@@ -88,19 +115,21 @@ function mc_swc_plugin_settings_page() {
 			<?php do_settings_sections( 'mc_swc_option1-group' ); ?>
 			<table class="form-table">
 				<tr valign="top">
-					<th scope="row">New Option Name</th>
-					<td><input type="text" name="new_option_name" value="<?php echo esc_attr( get_option('new_option_name') ); ?>" /></td>
+					<th scope="row">Cache images</th>
+                    <td><label>Yes <input type="radio" name="cache_images" value="yes" <?php echo $checked_images_yes; ?>></label><label>No <input type="radio" name="cache_images" value="no" <?php echo $checked_images_no; ?>></label></td>
 				</tr>
-
-				<tr valign="top">
-					<th scope="row">Some Other Option</th>
-					<td><input type="text" name="some_other_option" value="<?php echo esc_attr( get_option('some_other_option') ); ?>" /></td>
-				</tr>
-
-				<tr valign="top">
-					<th scope="row">Options, Etc.</th>
-					<td><input type="text" name="option_etc" value="<?php echo esc_attr( get_option('option_etc') ); ?>" /></td>
-				</tr>
+                <tr valign="top">
+                    <th scope="row">Cache CSS</th>
+                    <td><label>Yes <input type="radio" name="cache_css" value="yes" <?php echo $checked_css_yes; ?>></label><label>No <input type="radio" name="cache_css" value="no" <?php echo $checked_css_no; ?>></label></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Cache JavaScript</th>
+                    <td><label>Yes <input type="radio" name="cache_js" value="yes" <?php echo $checked_js_yes; ?>></label><label>No <input type="radio" name="cache_js" value="no" <?php echo $checked_js_no; ?>></label></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Cache other</th>
+                    <td><label>Yes <input type="radio" name="cache_other" value="yes" <?php echo $checked_other_yes; ?>></label><label>No <input type="radio" name="cache_other" value="no" <?php echo $checked_other_no; ?>></label></td>
+                </tr>
 			</table>
 			<?php submit_button(); ?>
 		</form>
@@ -113,8 +142,7 @@ add_action( 'wp_ajax_nopriv_getsettings', 'mc_swc_get_settings' );
 
 function mc_swc_get_settings() {
     header('Content-Type: application/json');
-	echo('{ "hullo": "ello" }');
-	//echo('{ "staticCacheItems": [ { "one": "/" } ]}');
+	echo('{ "cache_images": "'.esc_attr( get_option('cache_images') ).'", "cache_css": "'.esc_attr( get_option('cache_css') ).'", "cache_js": "'.esc_attr( get_option('cache_js') ).'", "cache_other": "'.esc_attr( get_option('cache_other') ).'" }');
 	exit();
 }
 ?>
