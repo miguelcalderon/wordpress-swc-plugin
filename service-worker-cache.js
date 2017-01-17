@@ -75,6 +75,8 @@ self.addEventListener('activate', event => {
     console.log('GOT IDB!');
     console.log(idbConfig);
     return idb().put('settings', 'config', idbConfig);
+  }).catch(function(event) {
+    console.log('Errored!');
   });
   event.waitUntil(
     onActivate(event, config)
