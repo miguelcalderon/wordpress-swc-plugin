@@ -72,11 +72,7 @@ self.addEventListener('activate', event => {
       });
   }
   getConfig().then(idbConfig => {
-    console.log('GOT IDB yeah!');
-    console.log(idbConfig);
     return idb().put('settings', 'config', idbConfig);
-  }).catch(function(event) {
-    console.log('Errored!');
   });
   event.waitUntil(
     onActivate(event, config)
@@ -85,6 +81,7 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', function(event) {
+  console.log(event.request.headers);
   if (event.request.url.indexOf('/wp-admin') !== -1 || event.request.url.indexOf('preview=true') !== -1 ) {
     return;
   }
