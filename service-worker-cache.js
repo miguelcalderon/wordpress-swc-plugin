@@ -17,7 +17,6 @@ var config = {
 };
 function getConfig() {
   return new Promise(function (resolve, reject) {
-    console.log('Develop!');
     var query = self.location.search;
     if (query) {
       var ajaxFormData = new FormData();
@@ -26,6 +25,7 @@ function getConfig() {
       fetch(decodeURIComponent(queryVar('settings'), query), { method: 'POST', body: ajaxFormData }).then(function(response) {
         if (response.ok) {
           return response.json().then(function(responseJSON) {
+            console.log(responseJSON);
             try {
               config = responseJSON;
             } catch (e) {
