@@ -110,7 +110,7 @@ function mc_swc_plugin_settings_page() {
 	?>
 	<div class="wrap">
 		<h2>Service Worker Cache</h2>
-		<form method="post" action="options.php">
+		<form method="post" action="/wp-admin/options.php">
 			<?php settings_fields( 'mc_swc_option1-group' ); ?>
 			<?php do_settings_sections( 'mc_swc_option1-group' ); ?>
 			<table class="form-table">
