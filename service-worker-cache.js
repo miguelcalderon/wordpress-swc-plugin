@@ -24,17 +24,9 @@ function getConfig() {
       ajaxFormData.append('_ajax_nonce', queryVar('nonce'));
       fetch(decodeURIComponent(queryVar('settings'), query), { method: 'POST', body: ajaxFormData }).then(function(response) {
         if (response.ok) {
-          return response.json().then(function(responseJSON) {
-            try {
-              config = responseJSON;
-            } catch (e) {
-              throw e;
-              return;
-            }
-            resolve(config);
-          });
+          return response.json().then(responseJSON => resolve(responseJSON));
         } else {
-          reject(response.statusText);
+          return reject(response.statusText);
         }
       }).catch(function(error) {
         reject(error);
