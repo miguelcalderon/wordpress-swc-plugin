@@ -22,22 +22,16 @@ function getConfig() {
       var ajaxFormData = new FormData();
       ajaxFormData.append('action', 'getsettings');
       ajaxFormData.append('_ajax_nonce', queryVar('nonce'));
-      console.log('1')
       fetch(decodeURIComponent(queryVar('settings'), query), { method: 'POST', body: ajaxFormData }).then(function(response) {
-        console.log('2')
         if (response.ok) {
-          console.log('3')
           return response.json().then(responseJSON => resolve(responseJSON));
         } else {
-          console.log('4')
           return reject(response.statusText);
         }
       }).catch(function(error) {
-        console.log('5')
         reject(error);
       });
     } else {
-      console.log('6')
       reject('No settings retrieval URL available.');
     }
   });
