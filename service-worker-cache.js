@@ -80,6 +80,7 @@ self.addEventListener('activate', event => {
       });
   }
   getConfig().then(idbConfig => {
+    console.log('GOT IDB!');
     console.log(idbConfig);
     return idb().put('settings', 'config', idbConfig);
   });
