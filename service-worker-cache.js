@@ -17,6 +17,7 @@ var config = {
 };
 function getConfig() {
   return new Promise(function (resolve, reject) {
+    console.log('Develop!');
     var query = self.location.search;
     if (query) {
       var ajaxFormData = new FormData();
