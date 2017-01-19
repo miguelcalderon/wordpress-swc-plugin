@@ -152,7 +152,7 @@ self.addEventListener('fetch', function(event) {
               return response;
             }
             var responseToCache = response.clone();
-            caches.open(CACHE_NAME)
+            caches.open(fileTypeCache)
               .then(function(cache) {
                 //console.log(event.request);
                 if (event.request.method === 'GET') {
