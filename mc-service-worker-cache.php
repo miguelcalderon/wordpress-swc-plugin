@@ -108,8 +108,8 @@ function mc_swc_plugin_settings_page() {
 	$checked_css_no = esc_attr( get_option('cache_css') ) == 'no' ? ' checked' : '';
 	$checked_js_yes = esc_attr( get_option('cache_js') ) == 'yes' ? ' checked' : '';
 	$checked_js_no = esc_attr( get_option('cache_js') ) == 'no' ? ' checked' : '';
-	$checked_other_yes = esc_attr( get_option('cache_images') ) == 'yes' ? ' checked' : '';
-	$checked_other_no = esc_attr( get_option('cache_images') ) == 'no' ? ' checked' : '';
+	$checked_other_yes = esc_attr( get_option('cache_other') ) == 'yes' ? ' checked' : '';
+	$checked_other_no = esc_attr( get_option('cache_other') ) == 'no' ? ' checked' : '';
 	?>
     <div class="wrap">
         <h2>Service Worker Cache</h2>
