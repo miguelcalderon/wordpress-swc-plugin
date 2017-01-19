@@ -81,11 +81,10 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', event => {
   //console.log('Activate stuff');
-  function onActivate (event, opts) {
+  function onActivate (event) {
     return caches.keys()
       .then(cacheKeys => {
-        var oldCacheKeys = cacheKeys.filter(key => key.indexOf(opts.version) !== 0),
-            deletePromises = oldCacheKeys.map(oldKey => caches.delete(oldKey));
+        var deletePromises = cacheKeys.map(oldKey => caches.delete(oldKey));
         return Promise.all(deletePromises);
       });
   }
@@ -99,7 +98,7 @@ self.addEventListener('activate', event => {
     }
   });
   event.waitUntil(
-    onActivate(event, config)
+    onActivate(event)
       .then(() => self.clients.claim())
   );
 });
