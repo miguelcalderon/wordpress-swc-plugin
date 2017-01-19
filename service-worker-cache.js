@@ -1,4 +1,11 @@
 'use strict';
+const defaultConfig = {
+  cache_images: "no",
+  cache_css: "no",
+  cache_js: "no",
+  cache_other: "no"
+};
+var webConfig;
 function queryVar(name, url) {
   if (!url) {
     url = self.location.href;
@@ -10,11 +17,7 @@ function queryVar(name, url) {
   if (!results[2]) return '';
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
-var config = {
-  staticCacheItems: [
-    '/'
-  ]
-};
+
 function getConfig() {
   return new Promise(function (resolve, reject) {
     var query = self.location.search;
@@ -49,14 +52,29 @@ function idb() {
   return swdb;
 }
 
-var CACHE_NAME = 'static';
+var CACHE_IMAGES = 'cache_images',
+    CACHE_CSS = 'cache_css',
+    CACHE_JS = 'cache_js',
+    CACHE_OTHER = 'cache_other';
 //console.log('I\'m a service worker!');
 self.addEventListener('install', event => {
   //console.log('Install stuff');
   function onInstall () {
-    return caches.open(CACHE_NAME).then(cache => cache.addAll(['/']));
+    return new Promise(function (resolve, reject) {
+      getConfig().then(idbConfig => {
+        return idb().put('settings', 'config', idbConfig);
+      }).then(() => {
+        webConfig = idb().get('settings', 'config');
+        if (webConfig === undefined) {
+          webConfig = defaultConfig;
+          idb().put('settings', 'config', webConfig);
+        }
+        return resolve();
+      }).catch(err => reject(err));
+    });
+    //return caches.open(CACHE_NAME).then(cache => cache.addAll(['/']));
   }
-  event.waitUntil(onInstall(event, config)
+  event.waitUntil(onInstall(event)
     .then(() => self.skipWaiting())
   );
 });
@@ -73,6 +91,12 @@ self.addEventListener('activate', event => {
   }
   getConfig().then(idbConfig => {
     return idb().put('settings', 'config', idbConfig);
+  }).then(function () {
+    webConfig = idb().get('settings', 'config');
+    if (webConfig === undefined) {
+      webConfig = defaultConfig;
+      idb().put('settings', 'config', webConfig);
+    }
   });
   event.waitUntil(
     onActivate(event, config)
@@ -81,7 +105,6 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', function(event) {
-  console.log('Headers');
   for (let entry of event.request.headers.entries()) {
     console.log(entry[0] + ': ' + entry[1]);
   }
