@@ -103,14 +103,41 @@ self.addEventListener('activate', event => {
       .then(() => self.clients.claim())
   );
 });
-
+var supportedTypes = {
+  'image/png': 'cache_images',
+  'image/jpeg': 'cache_images',
+  'image/webp': 'cache_images',
+  'image/gif': 'cache_images',
+  'image/svg': 'cache_images',
+  'text/css': 'cache_css',
+  'application/javascript': 'cache_js'
+};
+function getFileTypeFromAcceptHeader (accepted) {
+  var acceptedTypes = accepted.split(';');
+  for (var i = 0, n = acceptedTypes.length; i < n; i++) {
+    var acceptedType = acceptedTypes[i].split(',');
+    for (var j = 0, k = acceptedType.length; j < k; j++) {
+      if (acceptedType[i].indexOf('/') !== -1) {
+        if (supportedTypes[acceptedType[i].trim()]) {
+          return supportedTypes[acceptedType[i].trim()];
+        }
+      }
+    }
+  }
+  return 'cache_other';
+}
 self.addEventListener('fetch', function(event) {
+  var fileTypeCache = 'cache_other';
   for (let entry of event.request.headers.entries()) {
     if (entry[0].toLowerCase() === 'accept') {
-      console.log(entry[1]);
+      fileTypeCache = getFileTypeFromAcceptHeader(entry[1]);
+      break;
     }
   }
   if (event.request.url.indexOf('/wp-admin') !== -1 || event.request.url.indexOf('preview=true') !== -1 ) {
+    return;
+  }
+  if (webConfig[fileTypeCache] !== 'yes') {
     return;
   }
   event.respondWith(
