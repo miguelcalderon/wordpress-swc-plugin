@@ -2,10 +2,11 @@
 /**
  * Plugin Name: MC Service Worker Cache
  * Plugin URI: https://github.com/miguelcalderon/wordpress-swc-plugin
- * Description: Experimental Basic implementation of service worker cache for Wordpress. Once activated it will cache every page asset but for wp-admin and preview assets. It needs to modify .htaccess to work, therefore it will only work on Apache setups with modifiable root .htaccess.
- * Version: 1.0
+ * Description: Experimental Basic implementation of service worker cache for Wordpress. Once activated you need to choose which file types it should cache: images, CSS, JavaScript and/or the rest. Wp-admin and preview asset requests are never cached. It relies on HTTP request's "Accept" header to determine the type of resource requested, and will use the first recognized mime type entry in the header. It needs to modify .htaccess to work, therefore it will only work on Apache setups with modifiable root .htaccess.
+
+ * Version: 0.2
  * Author: Miguel Calderón
- * Author URI: https://github.com/miguelcalderon
+ * Author URI: https://github.com/miguelcalderon/wordpress-swc-plugin
  * License: GPL2
  * Copyright 2016 Miguel Calderón
 
