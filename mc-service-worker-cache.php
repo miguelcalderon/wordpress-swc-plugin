@@ -38,10 +38,11 @@ function refresh_rewrite_rules() {
 	$wp_rewrite->flush_rules();
 }
 function add_mc_swc_rewrite($rules) {
+    $rules = str_replace("\n".'RewriteRule ^serviceWorker.js$ '.str_replace(site_url(), '', plugin_dir_url( __FILE__ )).'remove-service-worker-cache.js [PT,L]', '', $rules);
 	return str_replace('RewriteBase /', 'RewriteBase /'."\n".'RewriteRule ^serviceWorker.js$ '.str_replace(site_url(), '', plugin_dir_url( __FILE__ )).'service-worker-cache.js [PT,L]', $rules);
 }
 function remove_mc_swc_rewrite($rules) {
-	return str_replace("\n".'RewriteRule ^serviceWorker.js$ '.str_replace(site_url(), '', plugin_dir_url( __FILE__ )).'service-worker-cache.js [PT,L]', '', $rules);
+	return str_replace("\n".'RewriteRule ^serviceWorker.js$ '.str_replace(site_url(), '', plugin_dir_url( __FILE__ )).'service-worker-cache.js [PT,L]', "\n".'RewriteRule ^serviceWorker.js$ '.str_replace(site_url(), '', plugin_dir_url( __FILE__ )).'remove-service-worker-cache.js [PT,L]', $rules);
 }
 function activate_mc_service_worker_cache() {
 	/*
