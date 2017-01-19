@@ -5,7 +5,7 @@ const defaultConfig = {
   cache_js: "no",
   cache_other: "no"
 };
-var webConfig;
+var webConfig = {};
 function queryVar(name, url) {
   if (!url) {
     url = self.location.href;
