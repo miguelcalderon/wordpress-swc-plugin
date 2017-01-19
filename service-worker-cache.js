@@ -106,7 +106,9 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', function(event) {
   for (let entry of event.request.headers.entries()) {
-    console.log(entry[0] + ': ' + entry[1]);
+    if (entry[0].toLowerCase() === 'accept') {
+      console.log(entry[1]);
+    }
   }
   if (event.request.url.indexOf('/wp-admin') !== -1 || event.request.url.indexOf('preview=true') !== -1 ) {
     return;
