@@ -3,8 +3,7 @@
  * Plugin Name: MC Service Worker Cache
  * Plugin URI: https://github.com/miguelcalderon/wordpress-swc-plugin
  * Description: Experimental Basic implementation of service worker cache for Wordpress. Once activated you need to choose which file types it should cache: images, CSS, JavaScript and/or the rest. Wp-admin and preview asset requests are never cached. It relies on HTTP request's "Accept" header to determine the type of resource requested, and will use the first recognized mime type entry in the header. It needs to modify .htaccess to work, therefore it will only work on Apache setups with modifiable root .htaccess.
-
- * Version: 0.2
+ * Version: 0.2.1
  * Author: Miguel Calderón
  * Author URI: https://github.com/miguelcalderon/wordpress-swc-plugin
  * License: GPL2
@@ -103,7 +102,7 @@ function create_section_for_radio($value) {
 }
 
 function mc_swc_plugin_settings_page() {
-    $checked_images_yes = esc_attr( get_option('cache_images') ) == 'yes' ? ' checked' : '';
+	$checked_images_yes = esc_attr( get_option('cache_images') ) == 'yes' ? ' checked' : '';
 	$checked_images_no = esc_attr( get_option('cache_images') ) == 'no' ? ' checked' : '';
 	$checked_css_yes = esc_attr( get_option('cache_css') ) == 'yes' ? ' checked' : '';
 	$checked_css_no = esc_attr( get_option('cache_css') ) == 'no' ? ' checked' : '';
@@ -112,16 +111,16 @@ function mc_swc_plugin_settings_page() {
 	$checked_other_yes = esc_attr( get_option('cache_images') ) == 'yes' ? ' checked' : '';
 	$checked_other_no = esc_attr( get_option('cache_images') ) == 'no' ? ' checked' : '';
 	?>
-	<div class="wrap">
-		<h2>Service Worker Cache</h2>
-		<form method="post" action="/wp-admin/options.php">
+    <div class="wrap">
+        <h2>Service Worker Cache</h2>
+        <form method="post" action="/wp-admin/options.php">
 			<?php settings_fields( 'mc_swc_option1-group' ); ?>
 			<?php do_settings_sections( 'mc_swc_option1-group' ); ?>
-			<table class="form-table">
-				<tr valign="top">
-					<th scope="row">Cache images</th>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Cache images</th>
                     <td><label>Yes <input type="radio" name="cache_images" value="yes" <?php echo $checked_images_yes; ?>></label><label>No <input type="radio" name="cache_images" value="no" <?php echo $checked_images_no; ?>></label></td>
-				</tr>
+                </tr>
                 <tr valign="top">
                     <th scope="row">Cache CSS</th>
                     <td><label>Yes <input type="radio" name="cache_css" value="yes" <?php echo $checked_css_yes; ?>></label><label>No <input type="radio" name="cache_css" value="no" <?php echo $checked_css_no; ?>></label></td>
@@ -134,18 +133,18 @@ function mc_swc_plugin_settings_page() {
                     <th scope="row">Cache other</th>
                     <td><label>Yes <input type="radio" name="cache_other" value="yes" <?php echo $checked_other_yes; ?>></label><label>No <input type="radio" name="cache_other" value="no" <?php echo $checked_other_no; ?>></label></td>
                 </tr>
-			</table>
+            </table>
 			<?php submit_button(); ?>
-		</form>
-	</div>
-<?php
+        </form>
+    </div>
+	<?php
 }
 
 add_action( 'wp_ajax_getsettings', 'mc_swc_get_settings' );
 add_action( 'wp_ajax_nopriv_getsettings', 'mc_swc_get_settings' );
 
 function mc_swc_get_settings() {
-    header('Content-Type: application/json');
+	header('Content-Type: application/json');
 	echo('{ "cache_images": "'.esc_attr( get_option('cache_images') ).'", "cache_css": "'.esc_attr( get_option('cache_css') ).'", "cache_js": "'.esc_attr( get_option('cache_js') ).'", "cache_other": "'.esc_attr( get_option('cache_other') ).'" }');
 	exit();
 }
