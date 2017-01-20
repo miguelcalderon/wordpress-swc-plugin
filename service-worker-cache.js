@@ -181,6 +181,17 @@ self.addEventListener('fetch', function(event) {
   if (webConfig[requestCache] !== 'yes') {
     return;
   }
+  if (event.request.url === '/') {
+    getConfig().then(idbConfig => {
+      return idb().put('settings', 'config', idbConfig);
+    }).then(() => {
+      webConfig = idb().get('settings', 'config');
+      if (webConfig === undefined) {
+        webConfig = defaultConfig;
+        idb().put('settings', 'config', webConfig);
+      }
+    });
+  }
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
