@@ -52,10 +52,6 @@ function idb() {
   return swdb;
 }
 
-var CACHE_IMAGES = 'cache_images',
-    CACHE_CSS = 'cache_css',
-    CACHE_JS = 'cache_js',
-    CACHE_OTHER = 'cache_other';
 //console.log('I\'m a service worker!');
 self.addEventListener('install', event => {
   //console.log('Install stuff');
@@ -108,8 +104,14 @@ var supportedTypes = {
   'image/webp': 'cache_images',
   'image/gif': 'cache_images',
   'image/svg': 'cache_images',
+  'image/*': 'cache_images',
   'text/css': 'cache_css',
-  'application/javascript': 'cache_js'
+  'application/javascript': 'cache_js',
+  'application/x-javascript': 'cache_js',
+  'text/javascript': 'cache_js',
+  'text/html': 'cache_other',
+  'application/xhtml+xml': 'cache_other',
+  'application/xml': 'cache_other'
 };
 function getFileTypeFromAcceptHeader (accepted) {
   var acceptedTypes = accepted.split(';');
@@ -120,23 +122,63 @@ function getFileTypeFromAcceptHeader (accepted) {
         if (supportedTypes[acceptedType[i].trim()]) {
           return supportedTypes[acceptedType[i].trim()];
         }
+        break;
       }
     }
   }
   return 'cache_other';
 }
-self.addEventListener('fetch', function(event) {
-  var fileTypeCache = 'cache_other';
-  for (let entry of event.request.headers.entries()) {
-    if (entry[0].toLowerCase() === 'accept') {
-      fileTypeCache = getFileTypeFromAcceptHeader(entry[1]);
-      break;
+function getFileTypeFromAcceptHeader (accepted) {
+  var acceptedTypes = accepted.split(';');
+  for (var i = 0, n = acceptedTypes.length; i < n; i++) {
+    var acceptedType = acceptedTypes[i].split(',');
+    for (var j = 0, k = acceptedType.length; j < k; j++) {
+      if (acceptedType[i].indexOf('/') !== -1) {
+        if (supportedTypes[acceptedType[i].trim()]) {
+          return supportedTypes[acceptedType[i].trim()];
+        }
+        break;
+      }
     }
   }
+  return 'cache_other';
+}
+function getFileTypeFromURLExtension (url) {
+  var URLExtension = function(url) {
+    return url.split('.').pop().split(/\#|\?/)[0];
+  };
+  switch (URLExtension(url).toLowerCase()) {
+    case 'jpeg':
+    case 'jpg':
+    case 'webp':
+    case 'gif':
+    case 'png':
+      return 'cache_images';
+      break;
+    case 'css':
+      return 'cache_css';
+      break;
+    case 'js':
+      return 'cache_js';
+      break;
+    default:
+      return 'cache_other';
+      break;
+  }
+}
+self.addEventListener('fetch', function(event) {
   if (event.request.url.indexOf('/wp-admin') !== -1 || event.request.url.indexOf('preview=true') !== -1 ) {
     return;
   }
-  if (webConfig[fileTypeCache] !== 'yes') {
+  var requestCache = 'cache_none';
+  for (let entry of event.request.headers.entries()) {
+    if (entry[0].toLowerCase() === 'accept') {
+      requestCache = getFileTypeFromAcceptHeader(entry[1]);
+      break;
+    }
+  }
+  requestCache = requestCache === 'cache_none' ? getFileTypeFromURLExtension(event.request.url) : requestCache;
+  if (webConfig[requestCache] !== 'yes') {
     return;
   }
   event.respondWith(
@@ -152,7 +194,7 @@ self.addEventListener('fetch', function(event) {
               return response;
             }
             var responseToCache = response.clone();
-            caches.open(fileTypeCache)
+            caches.open(requestCache)
               .then(function(cache) {
                 //console.log(event.request);
                 if (event.request.method === 'GET') {
